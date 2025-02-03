@@ -4,20 +4,30 @@ import axios from "axios";
 
 import "../css/login-form.css";
 
-export default function Home() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const handleClick = async () => {
+const getProtectedData = async () => {
     try {
-      const response = await axios.post("/api/auth/login", {
-        username: username,
-        password: password,
-      });
-      console.log(response.data.message);
+      const response = await axios.get(
+        '/api/auth/checktoken', // 保護されたエンドポイント
+        { withCredentials: true } // クッキーを送信
+      );
+      console.log(response.data.data.message); // 保護されたデータ
+      if (response.data.data.message === "loginSuccess"){
+        if (window.location.pathname === "/login") {
+          window.location.href = "/";
+        } else if (window.location.pathname === "/signup") {
+          window.location.href = "/";
+        } else {
+          console.log('error', response);
+        }
+      }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("だめだね");
     }
   };
+  
+
+export default function Home() {
+
   return (
     <div className="container">
       <div className="topbar">
